@@ -1,10 +1,7 @@
 export function getFormattedDate(date) {
-   // return `${date.getDate().toString().padStart(2, "0")}-${date
-   //    .getMonth()
-   //    .toString()
-   //    .padStart(2, "0")}-${date.getFullYear()}`;
+   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate() + 1}`;
+}
 
-   // return `${date.toLocaleDateString("en-US")}`;
-
-   return `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`;
+export function getDateMinusDays(date, days) {
+   return new Date(date.getFullYear(), date.getMonth(), date.getDate() - days);
 }
