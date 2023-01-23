@@ -1,8 +1,33 @@
+import { useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import Input from "./Input";
+import Button from "../UI/Button";
 
-function ExpenseForm() {
-   function amountChangedHandler() {}
+function ExpenseForm({ submitButtonLabel, onCancel, onSubmit }) {
+   const [inputValues, setInputValue] = useState({
+      amount: "",
+      date: "",
+      description: "",
+   });
+
+   function inputChangedHandler(inputIdentifier, enteredValue) {
+      setInputValue((curInputValues) => {
+         return {
+            ...curInputValues,
+            [inputIdentifier]: enteredValue,
+            //amount property equal to enteredValue, which allow us to dinamically target and set property names.
+         };
+      });
+   }
+
+   function submitHandler() {
+      const expenseData = {
+         amount: +inputValues.amount, //converts string to a number
+         date: new Date(inputValues.date),
+         description: inputValues.description,
+      };
+      onSubmit(expenseData);
+   }
 
    return (
       <View style={styles.form}>
@@ -13,7 +38,9 @@ function ExpenseForm() {
                label="Amount"
                textInputConfig={{
                   keyboardType: "decimal-pad",
-                  onChangeText: amountChangedHandler,
+                  onChangeText: inputChangedHandler.bind(this, "amount"),
+                  //2nd parameter enteredValue will be automatically passed by react native.
+                  value: inputValues.amount,
                }}
             />
             <Input
@@ -22,7 +49,8 @@ function ExpenseForm() {
                textInputConfig={{
                   placeholder: "YYYY-MM-DD",
                   maxLength: 10,
-                  onChangeText: () => {},
+                  onChangeText: inputChangedHandler.bind(this, "date"),
+                  value: inputValues.date,
                }}
             />
          </View>
@@ -32,8 +60,19 @@ function ExpenseForm() {
                multiline: true,
                // autoCapitalize: 'none'
                // autoCorrect: false //default is ture
+               onChangeText: inputChangedHandler.bind(this, "description"),
+               value: inputValues.description,
             }}
          />
+
+         <View style={styles.buttons}>
+            <Button style={styles.button} mode="flat" onPress={onCancel}>
+               Cancel
+            </Button>
+            <Button style={styles.button} onPress={submitHandler}>
+               {submitButtonLabel}
+            </Button>
+         </View>
       </View>
    );
 }
@@ -57,5 +96,14 @@ const styles = StyleSheet.create({
    },
    rowInput: {
       flex: 1,
+   },
+   buttons: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+   },
+   button: {
+      minWidth: 120,
+      marginHorizontal: 8,
    },
 });
